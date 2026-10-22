@@ -1,0 +1,187 @@
+const axios = require("axios");
+
+const apiList = "https://gitlab.com/shahadat-sahu/sahu-api/-/raw/main/API.json";
+
+const getMainAPI = async () => (await axios.get(apiList)).data.simsimi;
+
+module.exports.config = {
+  name: "autoreplybot",
+  version: "2.0.0",
+  hasPermssion: 0,
+  credits: "Era",
+  usePrefix: false,
+  commandCategory: "Chat",
+  cooldowns: 0
+};
+
+module.exports.handleEvent = async function ({ api, event }) {
+  const { threadID, messageID, body, senderID } = event;
+  if (!body) return;
+
+  const msg = body.trim().toLowerCase();
+
+  const responses = {
+    "miss you": "অরেক বেডারে Miss না করে xan মেয়ে হলে আমাকে ইনবক্স করো ইরাম যেনো না জানে তাহলে কোট দিবে😶👻😘",
+    "miss u too": "হুম আমি ও তোমাকে একদম মিস করি না থু😏💖",
+
+    "bot": "dakis na to sor",
+    "আমি কি জানিস": "কিডা তুই 🙄",
+    "faraz": "বাড়ি সাভার মামা",
+    "kiss de": "কিস দিস না তোর মুখে দূর গন্ধ কয়দিন ধরে দাঁত ব্রাশ করিস নাই🤬",
+    "👍": "সর এখান থেকে লাইকার আবাল..!🐸🤣👍⛏️",
+    "hi": "এত হাই-হ্যালো কর ক্যান প্রিও..!😜🫵",
+    "adira": "অটো টুন সেটা আবার কি🙂🌚👊🏻",
+    "lisan 1": "সাবাব বেবী রাতে ভিডু -\nকল দিও💋",
+    "anu": "আরেহ জানু 🥹",
+    "lisan": "আমি lisan বেবী vastagana uiya🌚",
+"nishi": "আরেহ নিশি ভাবি আসসালামু আলাইকুম 🫡",
+"tina": "টিনা পাদে পু পু 🙊",
+    "kamrul": "sadiyaaa আমাকে ভেঙে -\n কোথায় গেলে হারিয়া 🥹",
+    "minhaj": " এক সময় আমার লেবুর থেকে বাজারের লেবু বেশি দামি ছিল। এই লেবু সেই লেবু না 🌚👊🏻",
+    "adira 1": "আসসালামু আলাইকুম 🤍-\nকেমন আছেন সবাই ?",
+
+    "sadiya": "সাদিয়া কে ডেকো না ফুস করে দিবে",
+    "sabab1": "সাবাব, বেবী কাছে আসো 🙄",
+
+    ":)": "rongless happy guy ;⁠)",
+
+    "faraz 1": "ফারাজ ভদ্র ছেলে না তেলে না ঝোলে 🙉",
+
+    "tazry": "মুই সাতক্ষীরার পা ভাঙ্গা গেং এর লিডার ☠️",
+
+    "তাজরী": "আমার মেয়ের জামাই ইরাম বাবাজি কোই🙊",
+
+    "সাদিয়া": "আমি নায়িকা চা সাদিয়া🤧",
+
+    "তামু": "তামান্না এর জামাই নাই🙊",
+    "tamu": "তামান্না শুধু বিয়ে করতে চাই🤧",
+
+    "sabab": "আলু আলু আলু কখনো বেগুন হবে না🤧",
+
+    "ফারাজ": "বদ্দা এর রক্ত চানা এর খুব পছন্দ 🫣",
+
+    "চানা": "its sanaaaaaaaaaaaa 😒",
+
+    "pro": "Khud k0o KYa LeGend SmJhTi Hai 😂",
+    "good morning": "GOOD MORNING দাত ব্রাশ করে খেয়ে নেও😚",
+    "good night": "Sweet Dream babu… 😏💤",
+    "abal": "~ তোর নানিকে আসসালামু আলাইকুম 🤖",
+
+    "bot 1": "তারেক কাক্কু এর মেয়ে রে alabu কারেন্ট নাই ডাকিস না.!😘",
+    "owner": "উনারে দিয়ে তোমার কাজ কি",
+    "admin": "He is eram তাকে সবাই চিনে😘☺️ আসলে চিনেই না 🙄 আকাইম্মা একটা",
+    "babi": "এ তো হাছিনা হে মেরে দিলকি দারকান হে মেরি জান হে😍.",
+    "chup": "তুই চুপ চুপ কর পাগল ছাগল",
+    "tum dum": "আসসালামু আলাইকুম",
+    "shut up": "তোরে টাইম নিয়ে মারুম 😒",
+
+    "assalamualaikum": "Walaikumassalam❤️‍🩹",
+    "ওয়ালাইকুমুস সালাম": "তারপর বলো কেমন আছো",
+    "kheyeso": "নাহ রাগ করেছি🙄",
+    "আসসালামু আলাইকুম": "ওয়ালাইকুম আসসালাম",
+    "kiss me": "তুমি পঁচা তোমাকে কিস দিবো না 🤭",
+    "thanks": "Thakns না দিয়ে একটা গান শোনাও",
+    "i love you": "আমাকে এখুনি গুঁতা দিন🫢😻",
+    "love you": "ভালোবাসা নামক আবলামী করতে চাইলে ইনবক্সে গুতা দিন😘 ইরাম কে জানিয়েন না আবার কোট দিবে 🫪",
+    "bye": "চিপায় যাবে নাকি..!🌚🌶️",
+
+    "ami": "হ্যা বলো কেমন আছেন..?☺️",
+    "bot er baccha": "আমার বাচ্চা তো তোমার গার্লফ্রেন্ডের পেটে..!!🌚⛏️",
+    "tor nam ki": "MY NAME IS Tum dum 𝐂𝐡𝐚𝐭 𝐁𝐨𝐭💖",
+    "pic de": "এন থেকে সর দুরে গিয়া মর😒",
+    "bot hi": "Hello 🌚👊🏻..!🥱🌝🌚",
+    "hala": "রাগ করে না সোনা পাখি 🥰",
+    "vag": "এতো রাগ শরীরের জন্য ভালো না 🥰",
+    "তারপর": "sulu লুলু .!🌚🤣",
+    "kire ki koros": "তোমার কথা ভাবতে ছি জানু 😚",
+    "ki koros": "সুন্দরী পটাতে ব্যস্ত আছি😏💘",
+    "kire bot": "হ্যাঁ সব কেমন আছেন🙈",
+    "valo aso": "হ্যাঁ আলহামদুলিল্লাহ তুমি?😌💞",
+    "pagol": "হুম পাগল, কিন্তু তোমারই পাগল 😏😂",
+    "break up": "ফুকাস ওন ক্যারিয়ার 😎🔥",
+    "tui ke": "আমি tum dum ChatBot 😏",
+    "umm": "এতো Umm কেনো জানু… কিছু বলবা? 😉",
+    "hmm": "Hmmm কিসের হুমম জানু ",
+    "love": "আমি তোমাকে ভালোবাসি জান😻🔥"
+  };
+
+  // বাংলা/ইংরেজি key দুটোই ঠিকভাবে খুঁজে বের করবে
+  const responseKey = Object.keys(responses).find(
+    key => key.trim().toLowerCase() === msg
+  );
+
+  if (!responseKey) return;
+
+  if (!global.client.handleReply) {
+    global.client.handleReply = [];
+  }
+
+  return api.sendMessage(
+    responses[responseKey],
+    threadID,
+    (err, info) => {
+      if (err || !info) return;
+
+      global.client.handleReply.push({
+        name: module.exports.config.name,
+        messageID: info.messageID,
+        author: senderID,
+        type: "kamrul"
+      });
+    },
+    messageID
+  );
+};
+
+module.exports.handleReply = async function ({ api, event, handleReply }) {
+  if (!handleReply) return;
+  if (event.senderID !== handleReply.author) return;
+  if (!event.body) return;
+
+  try {
+    const text = event.body.trim();
+    if (!text) return;
+
+    const base = await getMainAPI();
+    const link = `${base}/simsimi?text=${encodeURIComponent(text)}`;
+
+    const res = await axios.get(link);
+
+    const reply = Array.isArray(res.data.response)
+      ? res.data.response[0]
+      : res.data.response;
+
+    if (!reply) return;
+
+    if (!global.client.handleReply) {
+      global.client.handleReply = [];
+    }
+
+    return api.sendMessage(
+      reply,
+      event.threadID,
+      (err, info) => {
+        if (err || !info) return;
+
+        global.client.handleReply.push({
+          name: module.exports.config.name,
+          messageID: info.messageID,
+          author: event.senderID,
+          type: "sahu"
+        });
+      },
+      event.messageID
+    );
+
+  } catch (e) {
+    return api.sendMessage(
+      "🙂 একটু পরে আবার বলো",
+      event.threadID,
+      event.messageID
+    );
+  }
+};
+
+module.exports.run = async function ({ api, event }) {
+  return module.exports.handleEvent({ api, event });
+};
